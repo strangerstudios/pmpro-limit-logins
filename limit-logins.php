@@ -61,8 +61,15 @@ class PMPro_Limit_Logins {
 				array( 'jquery' ),
 				PMPRO_LIMIT_LOGINS_VERSION
 			);
-			$timeout = apply_filters( 'wp_bouncer_ajax_timeout', 5000 );
+
+			/**
+			 * Filter the timeout for the AJAX request.
+			 * @deprecated 1.6 Use pmpro_limit_logins_ajax_timeout instead.
+			 * @param int $timeout The timeout in milliseconds.
+			 */
+			$timeout = apply_filters_deprecated( 'wp_bouncer_ajax_timeout', array( 5000 ), '1.6', 'pmpro_limit_logins_ajax_timeout' );
 			$timeout = apply_filters( 'pmpro_limit_logins_ajax_timeout', $timeout );
+
 			wp_localize_script(
 				'pmpro_limit_logins',
 				'pmpro_limit_logins',
@@ -85,7 +92,12 @@ class PMPro_Limit_Logins {
 	 * Get the URL to redirect dupe logins to
 	 */
 	public function get_redirect_url() {
-		$url = apply_filters( 'wp_bouncer_redirect_url', esc_url( add_query_arg( 'bounced', '1', wp_login_url() ) ) );
+		/**
+		 * Filter the URL to redirect to when a user is flagged for multiple logins.
+		 * @deprecated 1.6 Use pmpro_limit_logins_redirect_url instead.
+		 * @param string $url The URL to redirect to, includes query string. (?bounced=1)
+		 */
+		$url = apply_filters_deprecated( 'wp_bouncer_redirect_url', array( esc_url( add_query_arg( 'bounced', '1', wp_login_url() ) ) ), '1.6', 'pmpro_limit_logins_redirect_url' );
 		$url = apply_filters( 'pmpro_limit_logins_redirect_url', $url );
 		return $url;
 	}
@@ -214,9 +226,13 @@ class PMPro_Limit_Logins {
 		if(is_user_logged_in()) {	
 			global $current_user;
 			
-			//ignore admins
-			$ignore_admins = apply_filters('wp_bouncer_ignore_admins', true);
-			$ignore_admins = apply_filters('pmpro_limit_logins_ignore_admins', $ignore_admins);
+			/**
+			 * Ignore admins from being flagged.
+			 * @deprecated 1.6 Use pmpro_limit_logins_ignore_admins instead.
+			 * @param bool $ignored_admins True to ignore admins, false to flag them from multiple logins.
+			 */
+			$ignore_admins = apply_filters_deprecated( 'wp_bouncer_ignore_admins', array( true ), '1.6', 'pmpro_limit_logins_ignore_admins' );
+			$ignore_admins = apply_filters( 'pmpro_limit_logins_ignore_admins', $ignore_admins );
 			if( $ignore_admins && current_user_can("manage_options"))
 				return false;
 			
@@ -230,9 +246,13 @@ class PMPro_Limit_Logins {
 			elseif(!is_array($session_ids))
 				$session_ids = array($session_ids);
 
-			//how many logins are allowed
-			$num_allowed = apply_filters('wp_bouncer_number_simultaneous_logins', 1);
-			$num_allowed = apply_filters('pmpro_limit_logins_number_simultaneous_logins', $num_allowed);
+			/**
+			 * Filter the number of simultaneous logins allowed.
+			 * @deprecated 1.6 Use pmpro_limit_logins_number_simultaneous_logins instead.
+			 * @param int $num_allowed The number of simultaneous logins allowed. Default 1.
+			 */
+			$num_allowed = apply_filters_deprecated( 'wp_bouncer_number_simultaneous_logins', array( 1 ), '1.6', 'pmpro_limit_logins_number_simultaneous_logins' );
+			$num_allowed = apply_filters( 'pmpro_limit_logins_number_simultaneous_logins', $num_allowed );
 			
 			//0 means do nothing
 			if(empty($num_allowed))
@@ -244,20 +264,37 @@ class PMPro_Limit_Logins {
 				$session_ids = array_values($session_ids);	//fix array keys								
 			}
 			
-			//filter since 1.3
-			$session_ids = apply_filters('wp_bouncer_session_ids', $session_ids, $old_session_ids, $current_user->ID);
-			$session_ids = apply_filters('pmpro_limit_logins_session_ids', $session_ids, $old_session_ids, $current_user->ID);
+			/**
+			 * Filter the session ids to check for a flagged login.
+			 * @deprecated 1.6 Use pmpro_limit_logins_session_ids instead.
+			 * @param array $session_ids The session ids to check.
+			 * @param array $old_session_ids The session ids before trimming.
+			 * @param int $user_id The user ID of the current user.
+			 */
+			$session_ids = apply_filters_deprecated( 'wp_bouncer_session_ids', array( $session_ids, $old_session_ids, $current_user->ID ), '1.6', 'pmpro_limit_logins_session_ids' );
+			$session_ids = apply_filters( 'pmpro_limit_logins_session_ids', $session_ids, $old_session_ids, $current_user->ID );
 						
-			//save session ids in case we trimmed them
-			$session_length = apply_filters('wp_bouncer_session_length', 3600*24*30, $current_user->ID);
-			$session_length = apply_filters('pmpro_limit_logins_session_length', $session_length, $current_user->ID);
+			/**
+			 * Filter the session length for the transient. Defaults to 30 days.
+			 * @deprecated 1.6 Use pmpro_limit_logins_session_length instead.
+			 * @param int $session_length The session length in seconds.
+			 * @param int $user_id The user ID of the current user.
+			 */
+			$session_length = apply_filters_deprecated( 'wp_bouncer_session_length', array( 3600*24*30, $current_user->ID ), '1.6', 'pmpro_limit_logins_session_length' );
+			$session_length = apply_filters( 'pmpro_limit_logins_session_length', $session_length, $current_user->ID );
 			set_transient("fakesessid_" . $current_user->user_login, $session_ids, $session_length);
 						
 			if(!empty($session_ids)) {			
 				if(empty($_COOKIE['fakesessid']) || !in_array($_COOKIE['fakesessid'], $session_ids)) {
-					//hook in case we want to do something different
-					$logout = apply_filters('wp_bouncer_login_flag', true, $session_ids);
-					$logout = apply_filters('pmpro_limit_logins_login_flag', $logout, $session_ids);
+					
+					/**
+					 * Filter to allow for custom login flagging
+					 * @deprecated 1.6 Use pmpro_limit_logins_login_flag instead.
+					 * @param bool $logout True to log the user out, false to keep them logged in.
+					 * @param array $session_ids The session ids to check.
+					 */
+					$logout = apply_filters_deprecated( 'wp_bouncer_login_flag', array( true, $session_ids ), '1.6', 'pmpro_limit_logins_login_flag' );
+					$logout = apply_filters( 'pmpro_limit_logins_login_flag', $logout, $session_ids );
 					
 					if($logout) {
 						//log user out
@@ -312,8 +349,14 @@ class PMPro_Limit_Logins {
 	 * Use the pmpro_limit_logins_reset_sessions_cap to change the capability required to see this.
 	 */	
 	public function user_row_actions($actions, $user) {	
-		$cap = apply_filters('wp_bouncer_reset_sessions_cap', 'edit_users');
-		$cap = apply_filters('pmpro_limit_logins_reset_sessions_cap', $cap);
+		/**
+		 * Filter the capability required to reset sessions.
+		 * @deprecated 1.6 Use pmpro_limit_logins_reset_sessions_cap instead.
+		 * @param string $cap The capability required to reset sessions. Default 'edit_users'.
+		 */
+		$cap = apply_filters_deprecated( 'wp_bouncer_reset_sessions_cap', array( 'edit_users' ), '1.6', 'pmpro_limit_logins_reset_sessions_cap' );
+		$cap = apply_filters( 'pmpro_limit_logins_reset_sessions_cap', $cap );
+
 		if(current_user_can($cap)) {
 			$url = admin_url("users.php?pmproll=" . $user->ID);
 			if(!empty($_REQUEST['s']))
@@ -347,9 +390,14 @@ class PMPro_Limit_Logins {
 				//check nonce
 				check_admin_referer( 'pmproll_'.$user_id);
 				
-				//check caps
-				$cap = apply_filters('wp_bouncer_reset_sessions_cap', 'edit_users');
-				$cap = apply_filters('pmpro_limit_logins_reset_sessions_cap', $cap);
+				/**
+				 * Filter the capability required to reset sessions.
+				 * @deprecated 1.6 Use pmpro_limit_logins_reset_sessions_cap instead.
+				 * @param string $cap The capability required to reset sessions. Default 'edit_users'.
+				 */
+				$cap = apply_filters_deprecated( 'wp_bouncer_reset_sessions_cap', array( 'edit_users' ), '1.6', 'pmpro_limit_logins_reset_sessions_cap' );
+				$cap = apply_filters( 'pmpro_limit_logins_reset_sessions_cap', $cap );
+
 				if(!current_user_can($cap)) {
 					//show error message
 					$wpb_msg = 'You do not have permission to reset user sessions.';
