@@ -8,7 +8,7 @@
  * Author URI: https://www.strangerstudios.com
  * Text Domain: pmpro-limit-logins
  * Domain Path: /languages
- * License: GPL v2 or later
+ * License: GPL-3.0
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
 
