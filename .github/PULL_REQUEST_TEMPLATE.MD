@@ -2,7 +2,7 @@
 
 * [ ] Have you followed the [Contributing guideline](https://github.com/strangerstudios/paid-memberships-pro/blob/master/.github/CONTRIBUTING.md)?
 * [ ] Does your code follow the [WordPress' coding standards](https://make.wordpress.org/core/handbook/best-practices/coding-standards/)?
-* [ ] Have you checked to ensure there aren't other open [Pull Requests](https://github.com/strangerstudios/paid-memberships-pro/pulls) for the same update/change?
+* [ ] Have you checked to ensure there aren't other open [Pull Requests](https://github.com/strangerstudios/pmpro-limit-logins/pulls) for the same update/change?
 
 <!-- Mark completed items with an [x] -->
 
