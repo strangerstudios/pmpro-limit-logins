@@ -70,11 +70,10 @@ define( 'PMPRO_LIMIT_LOGINS_HEARTBEAT_CHECK', true );
 We've found that using a 2-Factor-Authentication scheme on your site is a good way to keep people from sharing accounts. When we tried to design an advanced version of WP-Bouncer, it was basically 2FA. So try that.
 
 == Changelog ==
-
-= 1.6 - 2024-11-19 =
-* Renamed to Paid Memberships Pro - Limit Logins
-* ENHANCEMENT: New filters added to match new name, previous filters maintained for backward compatibility
-* ENHANCEMENT: Automatically deactivate WP Bouncer if active
+= 1.6 - 2025-01-20 =
+* REFACTOR: Renamed to Paid Memberships Pro - Limit Logins
+* ENHANCEMENT: New filters added to match new name, previous filters maintained for backward compatibility. Please replace `wp_bouncer_` with `pmpro_limit_logins_` in code. 
+* ENHANCEMENT: Automatically deactivate WP Bouncer if active.
 
 = 1.5.1 - 2023-01-30 =
 * ENHANCEMENT: Added filter `wp_bouncer_ajax_timeout` to adjust timeout (default 5000).
