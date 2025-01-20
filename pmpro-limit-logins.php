@@ -51,6 +51,12 @@ class PMPro_Limit_Logins {
 	}
 	
 	public function wp_enqueue_scripts() {
+
+		// Backwards compatibility for WP Bouncer if WP_BOUNCER_HEARTBEAT_CHECK is defined.
+		if ( defined( 'WP_BOUNCER_HEARTBEAT_CHECK' ) && ! defined( 'PMPRO_LIMIT_LOGINS_HEARTBEAT_CHECK' ) ) {
+			define( 'PMPRO_LIMIT_LOGINS_HEARTBEAT_CHECK', WP_BOUNCER_HEARTBEAT_CHECK );
+		}
+		
 		// Check for PMPRO_LIMIT_LOGINS_HEARTBEAT_CHECK constant first
 		if ( defined( 'PMPRO_LIMIT_LOGINS_HEARTBEAT_CHECK' ) 
 			&& PMPRO_LIMIT_LOGINS_HEARTBEAT_CHECK == true 
