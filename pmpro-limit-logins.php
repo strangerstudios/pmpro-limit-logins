@@ -8,8 +8,6 @@
  * Author URI: https://www.strangerstudios.com
  * Text Domain: pmpro-limit-logins
  * Domain Path: /languages
- * License: GPL-3.0
- * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 define( 'PMPRO_LIMIT_LOGINS_VERSION', '1.6' );
@@ -59,7 +57,7 @@ class PMPro_Limit_Logins {
 			&& is_user_logged_in() ) {
 			wp_enqueue_script(
 				'pmpro_limit_logins', 
-				plugins_url( 'js/limit-logins.js', __FILE__ ),
+				plugins_url( 'js/pmpro-limit-logins.js', __FILE__ ),
 				array( 'jquery' ),
 				PMPRO_LIMIT_LOGINS_VERSION
 			);
@@ -99,7 +97,7 @@ class PMPro_Limit_Logins {
 	public function user_bounced_error() {
 		global $error;
 
-		if ( isset( $_REQUEST['bounced'] ) && '1' == $_REQUEST['bounced'] ) {
+		if( isset( $_REQUEST['bounced'] ) && '1' == $_REQUEST['bounced'] ) {
 			$error  = esc_html__( 'There was an issue with your log in. Your user account has logged in recently from a different location.', 'pmpro-limit-logins' );
 		}
   
@@ -374,7 +372,7 @@ class PMPro_Limit_Logins {
 	public function admin_notices() {
 		global $wpb_msg, $wpb_msgt;
 		if(!empty($wpb_msg))
-			echo '<div class="' . esc_attr( $wpb_msgt ) . '"><p>' . esc_html( $wpb_msg ) . '</p></div>'; 
+			echo "<div class=\"$wpb_msgt\"><p>$wpb_msg</p></div>"; 
 	}
 	
 	/**
@@ -391,7 +389,7 @@ class PMPro_Limit_Logins {
 			$r['flagged'] = false;
 		}
 		
-		echo wp_json_encode( $r );
+		echo json_encode( $r );
 		
 		exit;
 	}
@@ -410,19 +408,15 @@ class PMPro_Limit_Logins {
 			deactivate_plugins( $plugin );
 
 			// Add an admin notice.
-			add_action( 'admin_notices', function() {
+			add_action( 'admin_notices', function() use ( $plugin ) {
 				?>
 				<div class="notice notice-warning is-dismissible">
-					<p><?php esc_html_e( 'WP Bouncer has been deactivated.', 'pmpro-limit-logins' ); ?></p>
+					<p><?php echo sprintf( __( '%s has been deactivated', 'pmpro-limit-logins' ), 'WP Bouncer' ); ?></p>
 				</div>
 				<?php
 			});
 		}
 
 	}
-	
-} // end class
-
-
-// Instantiate our class
+} // End of class
 $PMPro_Limit_Logins = new PMPro_Limit_Logins();
