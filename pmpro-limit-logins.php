@@ -4,8 +4,8 @@
  * Plugin URI: https://www.paidmembershipspro.com/add-ons/limit-logins/
  * Description: Deter members from sharing login credentials: restrict simultaneous logins for the same user.
  * Version: 1.6
- * Author: Stranger Studios
- * Author URI: https://www.strangerstudios.com
+ * Author: Paid Memberships Pro
+ * Author URI: https://www.paidmembershipspro.com
  * Text Domain: pmpro-limit-logins
  * Domain Path: /languages
  */

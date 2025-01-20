@@ -1,12 +1,13 @@
 === Paid Memberships Pro - Limit Logins ===
-Contributors: strangerstudios, norcross
+Contributors: strangerstudios
 Website Link: https://www.paidmembershipspro.com/add-ons/limit-logins/
 Tags: login, security, membership, firewall, protection
-Requires at least: 5.2
+Requires at least: 5.4
 Tested up to: 6.7
 Stable tag: 1.6
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Requires PHP: 7.4
+License: GPLv3 or later
+License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 Deter members from sharing login credentials: restrict simultaneous logins for the same user.
 
@@ -14,60 +15,18 @@ Deter members from sharing login credentials: restrict simultaneous logins for t
 
 Limit Logins restricts the number of simultaneous logins for the same WordPress user account. The plugin's goal is to deter people from sharing their login credentials for your site, which is especially important for a paid membership, premium content, or eLearning site.
 
-### How Limit Logins Protects Shared User Logins
-
-* The plugin stores a random `FAKESESSID` for each user when they log in.
-* If a user is logged in, on each page load (init hook), WP Bouncer checks if the `FAKESESSID` stored in the user’s cookies is the same as the last login stored in a transient (`fakesessid_user_login`).
-* If the two values do no match, Limit Logins logs the user out and redirects them to the WordPress login page or a custom page using the pmpro_limit_logins_redirect_url filter.
-
-If the PMPRO_LIMIT_LOGINS_HEARTBEAT_CHECK is defined to true, JavaScript will be loaded to bounce users when a new user logs in with the same login. This is useful for sites with page caching.
-
-Admininstrator accounts or any users with the "manage_options" capability are excluded from bounces.
-
-### Or, Allow a Specific Number of Active Sessions
-
-By default, Limit Logins only allows one session per user. 
-
-You can use this plugin to offer bulk memberships to corporate, education, or other group-type customers via a shared login.
-
-Use the `pmpro_limit_logins_number_simultaneous_logins` filter to allow a defined number of active "sessions".
-
-[View the Recipe](https://www.paidmembershipspro.com/limit-user-active-sessions/)
-
-### Example Use Cases for Limit Logins
-* User A logs in as "user". Their `FAKESESSID`, say "SESSION_A" is stored in a WordPress option.
-* User B logs in as "user". Their `FAKESESSID`, say "SESSION_B" is overwrites the stored WordPress option.
-* User A tries to load a page on your site, WP Bouncer catches them and logs them out, redirecting them to the warning message.
-* User B can browse around the site as normal... unless...
-* User A logs in again as "user". Their `FAKESESSID`, "SESSION_A_v2" is stored in the WordPress option.
-* Now user B would be logged out if they load another page.
-
-### Hooks and Filters
-* `pmpro_limit_logins_ignore_admins` filter: if returning false even admins will be bounced.
-* `pmpro_limit_logins_redirect_url` filter: can be used to change the URL redirected to after being bounced.
-* `pmpro_limit_logins_number_simultaneous_logins` filter: can be set to limit logins to a number other than 1. 0 means unlimited logins.
-* `pmpro_limit_logins_login_flag`: runs right before bouncing (can be used to potentially stop the bouncing).
-* `pmpro_limit_logins_session_ids` hook: used to filter session ids when saving them. Passes $session_ids, $old_session_ids (before any were removed/bounced), and the current user's ID as parameters.
-* `pmpro_limit_logins_session_length` hook: used to filter how long the session ids transients are set. This way, you can time the transients to expire at a specific time of day. Note that the transient is saved on every page load, so if you set it to 5 minutes, it's going to push it out 5 minutes on every page load. You should try to set it to (the number of seconds until midnight) or something like that.
-
-### Support the Plugin Authors
-If you like this plugin, please check out Jason's work with [Stranger Studios](https://www.strangerstudios.com) and [Paid Memberships Pro](https://www.paidmembershipspro.com) and [Andrew's work at his personal site](http://andrewnorcross.com/).
+For more information please visit https://www.paidmembershipspro.com/add-ons/limit-logins.
 
 == Installation ==
 
-1. Upload the `pmpro-limit-logins` folder to the `/wp-content/plugins/` directory
-2. Activate the plugin through the `Plugins` menu in WordPress.
-
-### Settings
-
-There are no settings for this plugin. If you want to modify the default behavior to instead enable JavaScript checks, add the following code to your wp-config.php:
-
-define( 'PMPRO_LIMIT_LOGINS_HEARTBEAT_CHECK', true );
+1. Upload the `pmpro-limit-logins` directory to the `/wp-content/plugins/` directory of your site.
+1. Activate the plugin through the 'Plugins' menu in WordPress.
 
 == Frequently Asked Questions ==
 
-= I need something strong to keep people from sharing accounts. =
-We've found that using a 2-Factor-Authentication scheme on your site is a good way to keep people from sharing accounts. When we tried to design an advanced version of WP-Bouncer, it was basically 2FA. So try that.
+= I found a bug in the plugin. =
+
+Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-limit-logins/issues
 
 == Changelog ==
 = 1.6 - 2025-01-20 =
@@ -120,8 +79,3 @@ We've found that using a 2-Factor-Authentication scheme on your site is a good w
 
 = 1.0 =
 * First release!
-
-== Upgrade Notice ==
-
-= 1.1 =
-* Admin accounts (specifically users with "manage_options" capability) are excluded from bounces. This will eventually be a setting once we setup a settings page.

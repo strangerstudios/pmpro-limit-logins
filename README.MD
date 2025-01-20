@@ -1,11 +1,11 @@
-![](pmpro-limit-logins-banner.jpg)
+![](pmpro-limit-logins-banner.png)
 
-# [Limit Logins](https://www.paidmembershipspro.com/add-ons/limit-logins/) #
+# [Paid Memberships Pro - Limit Logins](https://www.paidmembershipspro.com/add-ons/limit-logins) #
 [comment]: # (Generate badges from shields.io, only works for .org plugins to get other stats etc. We'd have to create our own endpoints for Premium plugins)
 
-![License](https://img.shields.io/badge/license-GPL--2.0%2B-red.svg?style=flat-square)
+![License](https://img.shields.io/badge/license-GPL--3.0%2B-red.svg?style=flat-square)
 
-### Welcome to the Limit Logins GitHub Repository
+### Welcome to the Paid Memberships Pro - Limit Logins GitHub Repository
 Limit Logins restricts the number of simultaneous logins for the same WordPress user account. The plugin's goal is to deter people from sharing their login credentials for your site, which is especially important for a paid membership, premium content, or eLearning site.
 
 For more information please visit [paidmembershipspro.com/add-ons/limit-logins/](https://www.paidmembershipspro.com/add-ons/limit-logins/)
@@ -34,4 +34,4 @@ There are various **ways to the help development** of Limit Logins:
 Here are some ways for **non-developers to contribute** to Limit Logins:
 
 1. Translate Limit Logins into your own [language](https://www.paidmembershipspro.com/paid-memberships-pro-in-your-language/).
-2. [Purchase a paid membership](https://paidmembershipspro.com/pricing) to help fund ongoing development and bug fixes.
+2. [Purchase a paid membership](https://www.paidmembershipspro.com/pricing) to help fund ongoing development and bug fixes.
