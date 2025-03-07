@@ -45,7 +45,7 @@ class PMPro_Limit_Logins {
 		// Show error message on login.
 		add_action( 'login_head', array( $this, 'user_bounced_error' ) );
 
-		// Deactivate WP Bounder.
+		// Deactivate WP Bouncer.
 		add_action( 'admin_init', array( $this, 'deactivate_wp_bouncer' ) );
 		
 	}
