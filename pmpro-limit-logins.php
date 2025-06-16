@@ -478,7 +478,7 @@ class PMPro_Limit_Logins {
 	public function plugin_row_meta( $links, $file ) {
 	   if ( strpos( $file, 'pmpro-limit-logins.php' ) !== false ) {
 		   $new_links = array(
-			   '<a href="' . esc_url( 'https://www.paidmembershipspro.com/add-ons/pmpro-limit-logins/' ) . '" title="' . esc_attr( __( 'View Documentation', 'pmpro-limit-logins' ) ) . '">' . __( 'Docs', 'pmpro-limit-logins' ) . '</a>',
+			   '<a href="' . esc_url( 'https://www.paidmembershipspro.com/add-ons/limit-logins/' ) . '" title="' . esc_attr( __( 'View Documentation', 'pmpro-limit-logins' ) ) . '">' . __( 'Docs', 'pmpro-limit-logins' ) . '</a>',
 			   '<a href="' . esc_url( 'https://www.paidmembershipspro.com/support/' ) . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro-limit-logins' ) ) . '">' . __( 'Support', 'pmpro-limit-logins' ) . '</a>',
 		   );
 		   $links     = array_merge( $links, $new_links );
