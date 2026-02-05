@@ -1,4 +1,4 @@
-# Copyright (C) 2025 Stranger Studios
+# Copyright (C) 2026 Paid Memberships Pro
 # This file is distributed under the same license as the Paid Memberships Pro - Limit Logins plugin.
 msgid ""
 msgstr ""
@@ -9,9 +9,9 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-01-20T14:26:09+00:00\n"
+"POT-Creation-Date: 2026-02-05T00:28:08+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.11.0\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pmpro-limit-logins\n"
 
 #. Plugin Name of the plugin
@@ -50,4 +50,14 @@ msgstr ""
 
 #: pmpro-limit-logins.php:464
 msgid "WP Bouncer has been deactivated"
+msgstr ""
+
+#. Author of the plugin
+#: pmpro-limit-logins.php
+msgid "Paid Memberships Pro"
+msgstr ""
+
+#. Author URI of the plugin
+#: pmpro-limit-logins.php
+msgid "https://www.paidmembershipspro.com"
 msgstr ""
