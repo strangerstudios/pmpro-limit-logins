@@ -3,7 +3,7 @@
  * Plugin Name: Paid Memberships Pro - Limit Logins
  * Plugin URI: https://www.paidmembershipspro.com/add-ons/limit-logins/
  * Description: Deter members from sharing login credentials: restrict simultaneous logins for the same user.
- * Version: 1.6
+ * Version: 1.7
  * Author: Paid Memberships Pro
  * Author URI: https://www.paidmembershipspro.com
  * Text Domain: pmpro-limit-logins
@@ -47,6 +47,10 @@ class PMPro_Limit_Logins {
 
 		// Deactivate WP Bounder.
 		add_action( 'admin_init', array( $this, 'deactivate_wp_bouncer' ) );
+
+		// Add settings page
+		add_action( 'admin_menu', array( $this, 'add_settings_page' ) );
+		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		
 	}
 	
@@ -96,12 +100,15 @@ class PMPro_Limit_Logins {
 	 * Get the URL to redirect dupe logins to
 	 */
 	public function get_redirect_url() {
+		$default_url = esc_url( add_query_arg( 'bounced', '1', wp_login_url() ) );
+		$url = get_option( 'pmpro_limit_logins_redirect_url', $default_url );
+		
 		/**
 		 * Filter the URL to redirect to when a user is flagged for multiple logins.
 		 * @deprecated 1.6 Use pmpro_limit_logins_redirect_url instead.
 		 * @param string $url The URL to redirect to, includes query string. (?bounced=1)
 		 */
-		$url = apply_filters_deprecated( 'wp_bouncer_redirect_url', array( esc_url( add_query_arg( 'bounced', '1', wp_login_url() ) ) ), '1.6', 'pmpro_limit_logins_redirect_url' );
+		$url = apply_filters_deprecated( 'wp_bouncer_redirect_url', array( $url ), '1.6', 'pmpro_limit_logins_redirect_url' );
 		$url = apply_filters( 'pmpro_limit_logins_redirect_url', $url );
 		return $url;
 	}
@@ -235,7 +242,8 @@ class PMPro_Limit_Logins {
 			 * @deprecated 1.6 Use pmpro_limit_logins_ignore_admins instead.
 			 * @param bool $ignored_admins True to ignore admins, false to flag them from multiple logins.
 			 */
-			$ignore_admins = apply_filters_deprecated( 'wp_bouncer_ignore_admins', array( true ), '1.6', 'pmpro_limit_logins_ignore_admins' );
+			$ignore_admins = get_option( 'pmpro_limit_logins_ignore_admins', true );
+			$ignore_admins = apply_filters_deprecated( 'wp_bouncer_ignore_admins', array( $ignore_admins ), '1.6', 'pmpro_limit_logins_ignore_admins' );
 			$ignore_admins = apply_filters( 'pmpro_limit_logins_ignore_admins', $ignore_admins );
 			if( $ignore_admins && current_user_can("manage_options"))
 				return false;
@@ -255,7 +263,8 @@ class PMPro_Limit_Logins {
 			 * @deprecated 1.6 Use pmpro_limit_logins_number_simultaneous_logins instead.
 			 * @param int $num_allowed The number of simultaneous logins allowed. Default 1.
 			 */
-			$num_allowed = apply_filters_deprecated( 'wp_bouncer_number_simultaneous_logins', array( 1 ), '1.6', 'pmpro_limit_logins_number_simultaneous_logins' );
+			$num_allowed = get_option( 'pmpro_limit_logins_number_simultaneous_logins', 1 );
+			$num_allowed = apply_filters_deprecated( 'wp_bouncer_number_simultaneous_logins', array( $num_allowed ), '1.6', 'pmpro_limit_logins_number_simultaneous_logins' );
 			$num_allowed = apply_filters( 'pmpro_limit_logins_number_simultaneous_logins', $num_allowed );
 			
 			//0 means do nothing
@@ -284,7 +293,9 @@ class PMPro_Limit_Logins {
 			 * @param int $session_length The session length in seconds.
 			 * @param int $user_id The user ID of the current user.
 			 */
-			$session_length = apply_filters_deprecated( 'wp_bouncer_session_length', array( 3600*24*30, $current_user->ID ), '1.6', 'pmpro_limit_logins_session_length' );
+			$session_days = get_option( 'pmpro_limit_logins_session_length', 30 );
+			$session_length = 3600 * 24 * $session_days;
+			$session_length = apply_filters_deprecated( 'wp_bouncer_session_length', array( $session_length, $current_user->ID ), '1.6', 'pmpro_limit_logins_session_length' );
 			$session_length = apply_filters( 'pmpro_limit_logins_session_length', $session_length, $current_user->ID );
 			set_transient("fakesessid_" . $current_user->user_login, $session_ids, $session_length);
 						
@@ -297,7 +308,8 @@ class PMPro_Limit_Logins {
 					 * @param bool $logout True to log the user out, false to keep them logged in.
 					 * @param array $session_ids The session ids to check.
 					 */
-					$logout = apply_filters_deprecated( 'wp_bouncer_login_flag', array( true, $session_ids ), '1.6', 'pmpro_limit_logins_login_flag' );
+					$logout = get_option( 'pmpro_limit_logins_trigger_logout', true );
+					$logout = apply_filters_deprecated( 'wp_bouncer_login_flag', array( $logout, $session_ids ), '1.6', 'pmpro_limit_logins_login_flag' );
 					$logout = apply_filters( 'pmpro_limit_logins_login_flag', $logout, $session_ids );
 					
 					if($logout) {
@@ -341,10 +353,14 @@ class PMPro_Limit_Logins {
 				
 		$session_ids[] = $new_session_id;			
 				
-		set_transient("fakesessid_" . $user_login, $session_ids, 3600*24*30);		
+		$session_days = get_option( 'pmpro_limit_logins_session_length', 30 );
+		$session_length = 3600 * 24 * $session_days;
+		set_transient("fakesessid_" . $user_login, $session_ids, $session_length);
 		
-		//and save it in a cookie		
-		setcookie("fakesessid", $new_session_id, time()+3600*24*30, COOKIEPATH, COOKIE_DOMAIN, false);	
+		//and save it in a cookie
+		$session_days = get_option( 'pmpro_limit_logins_session_length', 30 );
+		$session_length = 3600 * 24 * $session_days;
+		setcookie("fakesessid", $new_session_id, time()+$session_length, COOKIEPATH, COOKIE_DOMAIN, false);	
 	}
 
 	/**
@@ -358,7 +374,8 @@ class PMPro_Limit_Logins {
 		 * @deprecated 1.6 Use pmpro_limit_logins_reset_sessions_cap instead.
 		 * @param string $cap The capability required to reset sessions. Default 'edit_users'.
 		 */
-		$cap = apply_filters_deprecated( 'wp_bouncer_reset_sessions_cap', array( 'edit_users' ), '1.6', 'pmpro_limit_logins_reset_sessions_cap' );
+		$cap = get_option( 'pmpro_limit_logins_reset_permission_level', 'edit_users' );
+		$cap = apply_filters_deprecated( 'wp_bouncer_reset_sessions_cap', array( $cap ), '1.6', 'pmpro_limit_logins_reset_sessions_cap' );
 		$cap = apply_filters( 'pmpro_limit_logins_reset_sessions_cap', $cap );
 		if(current_user_can($cap)) {
 			$url = admin_url("users.php?pmproll=" . $user->ID);
@@ -398,7 +415,8 @@ class PMPro_Limit_Logins {
 				 * @deprecated 1.6 Use pmpro_limit_logins_reset_sessions_cap instead.
 				 * @param string $cap The capability required to reset sessions. Default 'edit_users'.
 				 */
-				$cap = apply_filters_deprecated( 'wp_bouncer_reset_sessions_cap', array( 'edit_users' ), '1.6', 'pmpro_limit_logins_reset_sessions_cap' );
+				$cap = get_option( 'pmpro_limit_logins_reset_permission_level', 'edit_users' );
+				$cap = apply_filters_deprecated( 'wp_bouncer_reset_sessions_cap', array( $cap ), '1.6', 'pmpro_limit_logins_reset_sessions_cap' );
 				$cap = apply_filters( 'pmpro_limit_logins_reset_sessions_cap', $cap );
 				if(!current_user_can($cap)) {
 					//show error message
@@ -467,6 +485,180 @@ class PMPro_Limit_Logins {
 			});
 		}
 
+	}
+
+	/**
+	 * Add settings page
+	 */
+	public function add_settings_page() {
+		add_options_page(
+			__( 'Limit Logins Settings', 'pmpro-limit-logins' ),
+			__( 'PMPro Logins', 'pmpro-limit-logins' ),
+			'manage_options',
+			'pmpro-limit-logins-settings',
+			array( $this, 'render_settings_page' )
+		);
+	}
+
+	/**
+	 * Register settings
+	 */
+	public function register_settings() {
+		register_setting( 'pmpro-limit-logins-settings-group', 'pmpro_limit_logins_number_simultaneous_logins' );
+		register_setting( 'pmpro-limit-logins-settings-group', 'pmpro_limit_logins_redirect_url' );
+		register_setting( 'pmpro-limit-logins-settings-group', 'pmpro_limit_logins_ignore_admins' );
+		register_setting( 'pmpro-limit-logins-settings-group', 'pmpro_limit_logins_session_length' );
+		register_setting( 'pmpro-limit-logins-settings-group', 'pmpro_limit_logins_trigger_logout' );
+		register_setting( 'pmpro-limit-logins-settings-group', 'pmpro_limit_logins_reset_permission_level' );
+
+		add_settings_section(
+			'pmpro_limit_logins_general',
+			__( 'General Settings', 'pmpro-limit-logins' ),
+			array( $this, 'settings_section_callback' ),
+			'pmpro-limit-logins-settings'
+		);
+
+		add_settings_field(
+			'pmpro_limit_logins_number_simultaneous_logins',
+			__( 'Simultaneous Logins', 'pmpro-limit-logins' ),
+			array( $this, 'number_simultaneous_logins_callback' ),
+			'pmpro-limit-logins-settings',
+			'pmpro_limit_logins_general'
+		);
+
+		add_settings_field(
+			'pmpro_limit_logins_redirect_url',
+			__( 'Redirect URL', 'pmpro-limit-logins' ),
+			array( $this, 'redirect_url_callback' ),
+			'pmpro-limit-logins-settings',
+			'pmpro_limit_logins_general'
+		);
+
+		add_settings_field(
+			'pmpro_limit_logins_ignore_admins',
+			__( 'Admins Ignore Login Limits', 'pmpro-limit-logins' ),
+			array( $this, 'ignore_admins_callback' ),
+			'pmpro-limit-logins-settings',
+			'pmpro_limit_logins_general'
+		);
+
+		add_settings_field(
+			'pmpro_limit_logins_session_length',
+			__( 'Session Timeout Length', 'pmpro-limit-logins' ),
+			array( $this, 'session_length_callback' ),
+			'pmpro-limit-logins-settings',
+			'pmpro_limit_logins_general'
+		);
+
+		add_settings_field(
+			'pmpro_limit_logins_trigger_logout',
+			__( 'Trigger Logout For Flagged Logins', 'pmpro-limit-logins' ),
+			array( $this, 'trigger_logout_callback' ),
+			'pmpro-limit-logins-settings',
+			'pmpro_limit_logins_general'
+		);
+
+		add_settings_field(
+			'pmpro_limit_logins_reset_permission_level',
+			__( 'Reset User Session Permission Level', 'pmpro-limit-logins' ),
+			array( $this, 'reset_permission_level_callback' ),
+			'pmpro-limit-logins-settings',
+			'pmpro_limit_logins_general'
+		);
+	}
+
+	/**
+	 * Render settings page
+	 */
+	public function render_settings_page() {
+		?>
+		<style>
+			.form-table th {
+				width: 250px;
+			}
+		</style>
+		<div class="wrap">
+			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+			<form action="options.php" method="post">
+				<?php
+				settings_fields( 'pmpro-limit-logins-settings-group' );
+				do_settings_sections( 'pmpro-limit-logins-settings' );
+				submit_button( 'Save Settings' );
+				?>
+			</form>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Settings section callback
+	 */
+	public function settings_section_callback() {
+		echo '<p>' . esc_html__( 'Configure the settings for limiting simultaneous logins.', 'pmpro-limit-logins' ) . '</p>';
+	}
+
+	/**
+	 * Number of simultaneous logins field callback
+	 */
+	public function number_simultaneous_logins_callback() {
+		$value = get_option( 'pmpro_limit_logins_number_simultaneous_logins', 1 );
+		echo '<input type="number" id="pmpro_limit_logins_number_simultaneous_logins" name="pmpro_limit_logins_number_simultaneous_logins" value="' . esc_attr( $value ) . '" min="1" max="10" />';
+		echo '<p class="description">' . esc_html__( 'Number of simultaneous logins allowed per user. Set to 0 to disable login limiting.', 'pmpro-limit-logins' ) . '</p>';
+	}
+
+	/**
+	 * Redirect URL field callback
+	 */
+	public function redirect_url_callback() {
+		$value = get_option( 'pmpro_limit_logins_redirect_url', esc_url( add_query_arg( 'bounced', '1', wp_login_url() ) ) );
+		echo '<input type="url" id="pmpro_limit_logins_redirect_url" name="pmpro_limit_logins_redirect_url" value="' . esc_attr( $value ) . '" class="regular-text" />';
+		echo '<p class="description">' . esc_html__( 'URL to redirect users when they reach their login limit.', 'pmpro-limit-logins' ) . '</p>';
+	}
+
+	/**
+	 * Ignore admins field callback
+	 */
+	public function ignore_admins_callback() {
+		$value = get_option( 'pmpro_limit_logins_ignore_admins', true );
+		echo '<input type="checkbox" id="pmpro_limit_logins_ignore_admins" name="pmpro_limit_logins_ignore_admins" value="1" ' . checked( 1, $value, false ) . ' />';
+		echo '<label for="pmpro_limit_logins_ignore_admins">' . esc_html__( 'Check this to allow administrators to bypass login limits', 'pmpro-limit-logins' ) . '</label>';
+	}
+
+	/**
+	 * Session length field callback
+	 */
+	public function session_length_callback() {
+		$value = get_option( 'pmpro_limit_logins_session_length', 30 );
+		echo '<input type="number" id="pmpro_limit_logins_session_length" name="pmpro_limit_logins_session_length" value="' . esc_attr( $value ) . '" min="1" max="365" />';
+		echo '<p class="description">' . esc_html__( 'Number of days before a session expires. Default is 30 days.', 'pmpro-limit-logins' ) . '</p>';
+	}
+
+	/**
+	 * Trigger logout field callback
+	 */
+	public function trigger_logout_callback() {
+		$value = get_option( 'pmpro_limit_logins_trigger_logout', true );
+		echo '<input type="checkbox" id="pmpro_limit_logins_trigger_logout" name="pmpro_limit_logins_trigger_logout" value="1" ' . checked( 1, $value, false ) . ' />';
+		echo '<label for="pmpro_limit_logins_trigger_logout">' . esc_html__( 'Check this to automatically log out users when they reach their login limit', 'pmpro-limit-logins' ) . '</label>';
+	}
+
+	/**
+	 * Reset permission level field callback
+	 */
+	public function reset_permission_level_callback() {
+		$value = get_option( 'pmpro_limit_logins_reset_permission_level', 'edit_users' );
+		$capabilities = array(
+			'manage_options' => __( 'Administrator', 'pmpro-limit-logins' ),
+			'edit_users' => __( 'User Editor', 'pmpro-limit-logins' ),
+			'list_users' => __( 'User Lister', 'pmpro-limit-logins' ),
+		);
+		
+		echo '<select id="pmpro_limit_logins_reset_permission_level" name="pmpro_limit_logins_reset_permission_level">';
+		foreach ( $capabilities as $cap => $label ) {
+			echo '<option value="' . esc_attr( $cap ) . '" ' . selected( $cap, $value, false ) . '>' . esc_html( $label ) . '</option>';
+		}
+		echo '</select>';
+		echo '<p class="description">' . esc_html__( 'Minimum user capability required to reset user sessions.', 'pmpro-limit-logins' ) . '</p>';
 	}
 } // End of class
 $PMPro_Limit_Logins = new PMPro_Limit_Logins();
