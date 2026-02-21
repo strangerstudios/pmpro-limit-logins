@@ -20,6 +20,9 @@ class PMPro_Limit_Logins {
 	 * @return PMPro_Limit_Logins
 	 */
 	public function __construct() {
+		// Add plugin row meta.
+		add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 2 );
+
 		//support translations
 		add_action( 'plugins_loaded', array( $this, 'textdomain' ) );
 
@@ -468,5 +471,19 @@ class PMPro_Limit_Logins {
 		}
 
 	}
+
+	/**
+	* Function to add links to the plugin row meta
+	*/
+	public function plugin_row_meta( $links, $file ) {
+	   if ( strpos( $file, 'pmpro-limit-logins.php' ) !== false ) {
+		   $new_links = array(
+			   '<a href="' . esc_url( 'https://www.paidmembershipspro.com/add-ons/limit-logins/' ) . '" title="' . esc_attr( __( 'View Documentation', 'pmpro-limit-logins' ) ) . '">' . __( 'Docs', 'pmpro-limit-logins' ) . '</a>',
+			   '<a href="' . esc_url( 'https://www.paidmembershipspro.com/support/' ) . '" title="' . esc_attr( __( 'Visit Customer Support Forum', 'pmpro-limit-logins' ) ) . '">' . __( 'Support', 'pmpro-limit-logins' ) . '</a>',
+		   );
+		   $links     = array_merge( $links, $new_links );
+	   }
+	   return $links;
+   }
 } // End of class
 $PMPro_Limit_Logins = new PMPro_Limit_Logins();
