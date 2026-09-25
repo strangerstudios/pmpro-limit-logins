@@ -10,6 +10,10 @@
  * Domain Path: /languages
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 define( 'PMPRO_LIMIT_LOGINS_VERSION', '1.6' );
 
 // Start up the engine
@@ -113,6 +117,7 @@ class PMPro_Limit_Logins {
 	public function user_bounced_error() {
 		global $error;
 
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only flag used to display a login error message.
 		if( isset( $_REQUEST['bounced'] ) && '1' == $_REQUEST['bounced'] ) {
 			$error  = esc_html__( 'There was an issue with your log in. Your user account has logged in recently from a different location.', 'pmpro-limit-logins' );
 		}
@@ -126,7 +131,7 @@ class PMPro_Limit_Logins {
 	 */
 	private function browser_data() {
 		// grab base user agent and parse out
-	    $u_agent	= $_SERVER['HTTP_USER_AGENT'];
+	    $u_agent	= isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '';
 	    $bname		= 'Unknown';
 	    $platform	= 'Unknown';
 	    $version	= '';
@@ -217,6 +222,7 @@ class PMPro_Limit_Logins {
 	 * @return PMPro_Limit_Logins
 	 */
 	public function flag_redirect() {		
+		// phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- Destination is filterable via pmpro_limit_logins_redirect_url and may legitimately be offsite.
 		wp_redirect( $this->get_redirect_url() );
 		exit();
 	}
@@ -329,7 +335,8 @@ class PMPro_Limit_Logins {
 		$browser	= $this->browser_data();
 				
 		//generate a new session id
-		$new_session_id = md5($browser['name'] . $browser['platform'] . $_SERVER['REMOTE_ADDR'] . time());
+		$remote_addr = isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : '';
+		$new_session_id = md5($browser['name'] . $browser['platform'] . $remote_addr . time());
 		
 		//save it in a list in a transient
 		$session_ids = get_transient("fakesessid_" . $user_login);
@@ -362,10 +369,12 @@ class PMPro_Limit_Logins {
 		$cap = apply_filters( 'pmpro_limit_logins_reset_sessions_cap', $cap );
 		if(current_user_can($cap)) {
 			$url = admin_url("users.php?pmproll=" . $user->ID);
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only list table state carried into the (nonced) reset link.
 			if(!empty($_REQUEST['s']))
-				$url .= "&s=" . esc_attr($_REQUEST['s']);
+				$url .= "&s=" . urlencode( sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ) );
 			if(!empty($_REQUEST['paged']))
 				$url .= "&paged=" . intval($_REQUEST['paged']);
+			// phpcs:enable WordPress.Security.NonceVerification.Recommended
 			$url = wp_nonce_url($url, 'pmproll_' . $user->ID);
 			$actions[] = '<a href="' . $url . '">Reset Sessions</a>';
 		}
@@ -422,7 +431,7 @@ class PMPro_Limit_Logins {
 	public function admin_notices() {
 		global $wpb_msg, $wpb_msgt;
 		if(!empty($wpb_msg))
-			echo "<div class=\"$wpb_msgt\"><p>$wpb_msg</p></div>"; 
+			echo '<div class="' . esc_attr( $wpb_msgt ) . '"><p>' . esc_html( $wpb_msg ) . '</p></div>';
 	}
 	
 	/**
