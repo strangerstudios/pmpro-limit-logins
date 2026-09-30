@@ -371,7 +371,8 @@ class PMPro_Limit_Logins {
 			$url = admin_url("users.php?pmproll=" . $user->ID);
 			// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only list table state carried into the (nonced) reset link.
 			if(!empty($_REQUEST['s']))
-				$url .= "&s=" . urlencode( sanitize_text_field( wp_unslash( $_REQUEST['s'] ) ) );
+				// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Matches core's users list (wp_unslash( trim() )) so the search term round-trips unchanged; urlencode() makes it safe for the query string.
+				$url .= "&s=" . urlencode( trim( wp_unslash( $_REQUEST['s'] ) ) );
 			if(!empty($_REQUEST['paged']))
 				$url .= "&paged=" . intval($_REQUEST['paged']);
 			// phpcs:enable WordPress.Security.NonceVerification.Recommended
