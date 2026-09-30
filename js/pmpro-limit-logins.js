@@ -1,8 +1,8 @@
 jQuery(document).ready(function() {
 	jQuery.ajax({
-		url: wp_bouncer.ajax_url,
+		url: pmpro_limit_logins.ajax_url,
 		type:'GET',
-		timeout: wp_bouncer.pmpro_limit_logins_ajax_timeout,
+		timeout: pmpro_limit_logins.pmpro_limit_logins_ajax_timeout,
 		dataType: 'html',
 		data: "action=pmpro_limit_logins_check",
 		error: function(xml){
