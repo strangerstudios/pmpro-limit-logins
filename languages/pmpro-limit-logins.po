@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Paid Memberships Pro - Limit Logins plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Paid Memberships Pro - Limit Logins 1.6\n"
+"Project-Id-Version: Paid Memberships Pro - Limit Logins 1.6.1\n"
 "Report-Msgid-Bugs-To: info@paidmembershipspro.com\n"
 "Last-Translator: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "Language-Team: Paid Memberships Pro <info@paidmembershipspro.com>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-02-05T00:28:08+00:00\n"
+"POT-Creation-Date: 2026-10-01T16:54:29+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: pmpro-limit-logins\n"
@@ -40,6 +40,7 @@ msgstr ""
 
 #: limit-logins.php:101
 #: pmpro-limit-logins.php:117
+#: pmpro-limit-logins.php:127
 msgid "There was an issue with your log in. Your user account has logged in recently from a different location."
 msgstr ""
 
@@ -49,6 +50,7 @@ msgid "Paid Memberships Pro - Limit Logins"
 msgstr ""
 
 #: pmpro-limit-logins.php:464
+#: pmpro-limit-logins.php:486
 msgid "WP Bouncer has been deactivated"
 msgstr ""
 
@@ -60,4 +62,38 @@ msgstr ""
 #. Author URI of the plugin
 #: pmpro-limit-logins.php
 msgid "https://www.paidmembershipspro.com"
+msgstr ""
+
+#: pmpro-limit-logins.php:391
+msgid "Reset Sessions"
+msgstr ""
+
+#: pmpro-limit-logins.php:411
+msgid "Could not reset sessions. User not found."
+msgstr ""
+
+#: pmpro-limit-logins.php:426
+msgid "You do not have permission to reset user sessions."
+msgstr ""
+
+#. translators: %s: Username.
+#: pmpro-limit-logins.php:434
+#, php-format
+msgid "Sessions reset for %s."
+msgstr ""
+
+#: pmpro-limit-logins.php:500
+msgid "View Documentation"
+msgstr ""
+
+#: pmpro-limit-logins.php:500
+msgid "Docs"
+msgstr ""
+
+#: pmpro-limit-logins.php:501
+msgid "Visit Customer Support Forum"
+msgstr ""
+
+#: pmpro-limit-logins.php:501
+msgid "Support"
 msgstr ""
