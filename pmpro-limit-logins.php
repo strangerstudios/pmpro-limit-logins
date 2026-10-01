@@ -3,7 +3,7 @@
  * Plugin Name: Paid Memberships Pro - Limit Logins
  * Plugin URI: https://www.paidmembershipspro.com/add-ons/limit-logins/
  * Description: Deter members from sharing login credentials: restrict simultaneous logins for the same user.
- * Version: 1.6
+ * Version: 1.6.1
  * Author: Paid Memberships Pro
  * Author URI: https://www.paidmembershipspro.com
  * Text Domain: pmpro-limit-logins
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'PMPRO_LIMIT_LOGINS_VERSION', '1.6' );
+define( 'PMPRO_LIMIT_LOGINS_VERSION', '1.6.1' );
 
 // Start up the engine
 class PMPro_Limit_Logins {

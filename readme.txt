@@ -3,8 +3,8 @@ Contributors: strangerstudios
 Website Link: https://www.paidmembershipspro.com/add-ons/limit-logins/
 Tags: login, security, membership, firewall, protection
 Requires at least: 5.4
-Tested up to: 6.7
-Stable tag: 1.6
+Tested up to: 7.1
+Stable tag: 1.6.1
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -29,6 +29,16 @@ For more information please visit https://www.paidmembershipspro.com/add-ons/lim
 Please post it in the issues section of GitHub and we'll fix it as soon as we can. Thanks for helping. https://github.com/strangerstudios/pmpro-limit-logins/issues
 
 == Changelog ==
+= 1.6.1 - 2026-10-01 =
+* SECURITY: Improved sanitization and escaping throughout the plugin to resolve Plugin Check security findings. #13 (@dparker1005)
+* ENHANCEMENT: Added Docs and Support links to the plugin's row on the Plugins page. #10 (@ipokkel)
+* ENHANCEMENT: The "Reset Sessions" link and its admin notices are now translatable. #16 (@dparker1005)
+* BUG FIX: Fixed the optional heartbeat check (`PMPRO_LIMIT_LOGINS_HEARTBEAT_CHECK`) never bouncing users. It previously threw a JavaScript error, and its AJAX request was redirected before it could report the bounce. #14, #17 (@dparker1005)
+* BUG FIX: Fixed the heartbeat check redirecting users whom the `pmpro_limit_logins_login_flag` filter keeps logged in. `PMPro_Limit_Logins::login_flag()` now returns `true` only when it logs the user out. #18 (@dparker1005)
+* BUG FIX: Fixed bounced users being redirected to a broken URL when the redirect URL has more than one query argument. #14 (@dparker1005)
+* BUG FIX: Fixed the users list search term being changed after clicking "Reset Sessions". #13 (@dparker1005)
+* BUG FIX: Fixed the README file being included in release zips. #16 (@dparker1005)
+
 = 1.6 - 2025-01-20 =
 * REFACTOR: Renamed to Paid Memberships Pro - Limit Logins
 * ENHANCEMENT: New filters added to match new name, previous filters maintained for backward compatibility. Please replace `wp_bouncer_` with `pmpro_limit_logins_` in code. 
