@@ -235,7 +235,7 @@ class PMPro_Limit_Logins {
 	/**
 	 * run checks for a flagged login
 	 *
-	 * @return PMPro_Limit_Logins
+	 * @return bool True if the current user was flagged and logged out.
 	 */
 	public function login_flag( $redirect = true ) {
 		// The heartbeat check runs its own flag check in ajax_check() and returns JSON, so skip the redirecting check on that request.
@@ -325,9 +325,9 @@ class PMPro_Limit_Logins {
 						if ( $redirect ) {
 							$this->flag_redirect();
 						}
+
+						return true;
 					}
-					
-					return true;
 				}
 			}
 		}
