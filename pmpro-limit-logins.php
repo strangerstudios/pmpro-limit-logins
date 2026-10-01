@@ -105,9 +105,11 @@ class PMPro_Limit_Logins {
 		 * @deprecated 1.6 Use pmpro_limit_logins_redirect_url instead.
 		 * @param string $url The URL to redirect to, includes query string. (?bounced=1)
 		 */
-		$url = apply_filters_deprecated( 'wp_bouncer_redirect_url', array( esc_url( add_query_arg( 'bounced', '1', wp_login_url() ) ) ), '1.6', 'pmpro_limit_logins_redirect_url' );
+		$url = apply_filters_deprecated( 'wp_bouncer_redirect_url', array( add_query_arg( 'bounced', '1', wp_login_url() ) ), '1.6', 'pmpro_limit_logins_redirect_url' );
 		$url = apply_filters( 'pmpro_limit_logins_redirect_url', $url );
-		return $url;
+
+		// Return a raw URL. Filters may still return an HTML-escaped URL (e.g. &#038;), so decode it.
+		return wp_specialchars_decode( $url, ENT_QUOTES );
 	}
 
 	/**
@@ -442,7 +444,7 @@ class PMPro_Limit_Logins {
 		$r = array();
 		
 		if( $this->login_flag( false ) ) {	
-			$r['redirect_url'] = esc_url( $this->get_redirect_url() );
+			$r['redirect_url'] = esc_url_raw( $this->get_redirect_url() );
 			$r['flagged'] = true;
 		} else {
 			$r['redirect_url'] = '';
