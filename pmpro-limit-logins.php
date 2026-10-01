@@ -238,6 +238,12 @@ class PMPro_Limit_Logins {
 	 * @return PMPro_Limit_Logins
 	 */
 	public function login_flag( $redirect = true ) {
+		// The heartbeat check runs its own flag check in ajax_check() and returns JSON, so skip the redirecting check on that request.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only compared against our AJAX action name.
+		if ( $redirect && wp_doing_ajax() && isset( $_REQUEST['action'] ) && 'pmpro_limit_logins_check' === $_REQUEST['action'] ) {
+			return false;
+		}
+
 		if(is_user_logged_in()) {	
 			global $current_user;
 			
