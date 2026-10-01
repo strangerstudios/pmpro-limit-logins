@@ -379,7 +379,7 @@ class PMPro_Limit_Logins {
 				$url .= "&paged=" . intval($_REQUEST['paged']);
 			// phpcs:enable WordPress.Security.NonceVerification.Recommended
 			$url = wp_nonce_url($url, 'pmproll_' . $user->ID);
-			$actions[] = '<a href="' . $url . '">Reset Sessions</a>';
+			$actions[] = '<a href="' . $url . '">' . esc_html__( 'Reset Sessions', 'pmpro-limit-logins' ) . '</a>';
 		}
 		
 		return $actions;
@@ -399,7 +399,7 @@ class PMPro_Limit_Logins {
 			//no user?
 			if(empty($user)) {
 				//user not found error
-				$wpb_msg = 'Could not reset sessions. User not found.';
+				$wpb_msg = __( 'Could not reset sessions. User not found.', 'pmpro-limit-logins' );
 				$wpb_msgt = 'error';
 			} else {				
 				//check nonce
@@ -414,14 +414,15 @@ class PMPro_Limit_Logins {
 				$cap = apply_filters( 'pmpro_limit_logins_reset_sessions_cap', $cap );
 				if(!current_user_can($cap)) {
 					//show error message
-					$wpb_msg = 'You do not have permission to reset user sessions.';
+					$wpb_msg = __( 'You do not have permission to reset user sessions.', 'pmpro-limit-logins' );
 					$wpb_msgt = 'error';
 				} else {
 					//all good, delete this user's sessions
 					delete_transient('fakesessid_'. $user->user_login);				
 					
 					//show success message
-					$wpb_msg = 'Sessions reset for ' . $user->user_login . '.';
+					/* translators: %s: Username. */
+					$wpb_msg = sprintf( __( 'Sessions reset for %s.', 'pmpro-limit-logins' ), $user->user_login );
 					$wpb_msgt = 'updated';
 				}
 			}						
